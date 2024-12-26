@@ -10,7 +10,7 @@ public class Main {
         N = scanner.nextInt();
         M = scanner.nextInt();
         balance = new int[N];
-        R = 0;
+        R = 0;  // 초기화
 
         for (int i = 0; i < N; i++) {
             balance[i] = scanner.nextInt();
