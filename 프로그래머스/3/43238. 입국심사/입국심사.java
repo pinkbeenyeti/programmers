@@ -12,11 +12,11 @@ class Solution {
     }
     
     public long process(int n, int[] times) {
-        long L = 1, R = (long) times[times.length - 1] * n; // long 자료형 사용
+        long L = 1, R = (long) times[times.length - 1] * n;
         long answer = 0;
         
         while (L <= R) {
-            long mid = (L + R) / 2; // mid를 long으로 선언
+            long mid = (L + R) / 2;
             
             if (canTest(n, mid, times)) {
                 answer = mid;
@@ -26,7 +26,7 @@ class Solution {
             }
         }
         
-        return answer; // answer 반환
+        return answer;
     }
     
     public long solution(int n, int[] times) {
