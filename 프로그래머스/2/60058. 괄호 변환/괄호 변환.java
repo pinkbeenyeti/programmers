@@ -6,11 +6,7 @@ class Solution {
     private void firstStep(String np) {
         if (np.isEmpty()) return;
         
-        if (np.charAt(0) == '(') {
-            correctU(np);
-        } else {
-            inCorrectU(np);
-        }
+        if (np.charAt(0) == '(') correctU(np); else inCorrectU(np);
     }
     
     private void correctU(String np) {
