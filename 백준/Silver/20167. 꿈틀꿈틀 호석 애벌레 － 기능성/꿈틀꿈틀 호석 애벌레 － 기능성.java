@@ -88,8 +88,12 @@ public class Main {
         satisfaction = new int[2][N+1];
         accumulation = new int[2][N+1];
 
-        satisfaction[0][1] = foods[1];
-        satisfaction[1][1] = foods[1];
+        if (foods[1] >= K) {
+            satisfaction[1][1] = 0;
+            accumulation[1][1] = foods[1] - K;
+        } else {
+            satisfaction[1][1] = foods[1];
+        }
 
         for (int i=2; i<=N; i++) {
             excludePrevious(i);
