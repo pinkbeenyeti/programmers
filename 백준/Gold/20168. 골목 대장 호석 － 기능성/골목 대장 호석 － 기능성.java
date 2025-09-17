@@ -56,6 +56,8 @@ public class Main {
     }
 
     private static void dfs(int prev, int node, int cost, int shame) {
+        if (shame >= minShame) return;
+        
         if (node == B) {
             minShame = Math.min(minShame, shame);
             return;
@@ -63,7 +65,6 @@ public class Main {
 
         for (int linked : nearList[node]) {
             if (linked == prev) continue;
-            if (cost + costs[node][linked] >= minShame) continue;
             if (cost + costs[node][linked] > C) continue;
 
             dfs(node, linked, cost + costs[node][linked], Math.max(shame, costs[node][linked]));
