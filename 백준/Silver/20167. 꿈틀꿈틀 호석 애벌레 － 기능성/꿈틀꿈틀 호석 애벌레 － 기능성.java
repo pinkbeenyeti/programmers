@@ -2,15 +2,25 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
     private static int N, K;
-    private static int stf0, stf1, acm0, acm1;
 
     private static int[] foods;
-    private static int[][] satisfaction;
-    private static int[][] accumulation;
+    private static int[] dp;
+    private static List<Interval>[] intervals;
+
+    private static class Interval {
+        int left, satisfy;
+
+        public Interval(int left, int satisfy) {
+            this.left = left;
+            this.satisfy = satisfy;
+        }
+    }
 
     private static void input() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -18,7 +28,14 @@ public class Main {
 
         N = Integer.parseInt(st.nextToken());
         K = Integer.parseInt(st.nextToken());
-        foods = new int[N+1];
+
+        foods = new int[N + 1];
+        dp = new int[N + 1];
+        intervals = new List[N + 1];
+
+        for (int i=1; i<=N; i++) {
+            intervals[i] = new ArrayList<>();
+        }
 
         st = new StringTokenizer(br.readLine());
         for (int i=1; i<=N; i++) {
@@ -26,81 +43,33 @@ public class Main {
         }
     }
 
-    private static void includePrevious(int index) {
-        if (foods[index] + satisfaction[0][index-1] >= K) {
-            stf0 = 0;
-            acm0 = foods[index] + satisfaction[0][index-1] - K;
-        } else {
-            stf0 =  foods[index] + satisfaction[0][index-1];
-            acm0 = 0;
-        }
-
-        if (foods[index] + satisfaction[1][index-1] >= K) {
-            stf1 = 0;
-            acm1 = foods[index] + satisfaction[1][index-1] - K;
-        } else {
-            stf1 =  foods[index] + satisfaction[1][index-1];
-            acm1 = 0;
-        }
-
-        if (acm0 + accumulation[0][index-1] > acm1 + accumulation[1][index-1]) {
-            satisfaction[1][index] = stf0;
-            accumulation[1][index] = acm0 + accumulation[0][index-1];
-        } else if (acm0 + accumulation[0][index-1] == acm1 + accumulation[1][index-1]) {
-            accumulation[1][index] = acm0 + accumulation[0][index-1];
-            satisfaction[1][index] = Math.max(stf0, stf1);
-        } else {
-            satisfaction[1][index] = stf1;
-            accumulation[1][index] = acm1 + accumulation[1][index-1];
-        }
-    }
-
-    private static void excludePrevious(int index) {
-        if (foods[index] + satisfaction[0][index-2] >= K) {
-            stf0 = 0;
-            acm0 = foods[index] + satisfaction[0][index-2] - K;
-        } else {
-            stf0 =  foods[index] + satisfaction[0][index-2];
-            acm0 = 0;
-        }
-
-        if (foods[index] + satisfaction[1][index-2] >= K) {
-            stf1 = 0;
-            acm1 = foods[index] + satisfaction[1][index-2] - K;
-        } else {
-            stf1 =  foods[index] + satisfaction[1][index-2];
-            acm1 = 0;
-        }
-
-        if (acm0 + accumulation[0][index-2] > acm1 + accumulation[1][index-2]) {
-            satisfaction[0][index]= stf0;
-            accumulation[0][index] = acm0 + accumulation[0][index-2];
-        } else if (acm0 + accumulation[0][index-2] == acm1 + accumulation[1][index-2]) {
-            accumulation[0][index] = acm0 + accumulation[0][index-2];
-            satisfaction[0][index] = Math.max(stf0, stf1);
-        } else {
-            satisfaction[0][index] = stf1;
-            accumulation[0][index] = acm1 + accumulation[1][index-2];
-        }
-    }
-
     private static void process() {
-        satisfaction = new int[2][N+1];
-        accumulation = new int[2][N+1];
+        for (int L=1, R=L; L<=N; L++) {
+            int sum = 0;
+            R = L;
 
-        if (foods[1] >= K) {
-            satisfaction[1][1] = 0;
-            accumulation[1][1] = foods[1] - K;
-        } else {
-            satisfaction[1][1] = foods[1];
+            while (L <= R && R <= N) {
+                sum += foods[R];
+
+                if (sum >= K) {
+                    intervals[R].add(new Interval(L, sum - K));
+                    break;
+                }
+
+                R++;
+            }
         }
 
-        for (int i=2; i<=N; i++) {
-            excludePrevious(i);
-            includePrevious(i);
-        }
+        for (int R=1; R<=N; R++) {
+            dp[R] = dp[R - 1];
 
-        System.out.println(Math.max(accumulation[0][N], accumulation[1][N]));
+            for (Interval interval : intervals[R]) {
+                dp[R] = Math.max(dp[R], dp[interval.left - 1] + interval.satisfy);
+            }
+
+        }
+        
+        System.out.println(dp[N]);
     }
 
     public static void main(String[] args) throws IOException {
