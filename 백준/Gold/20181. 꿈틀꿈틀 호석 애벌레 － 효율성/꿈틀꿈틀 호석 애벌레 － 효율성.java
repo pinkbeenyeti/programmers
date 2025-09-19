@@ -48,9 +48,9 @@ public class Main {
         long sum = 0;
 
         for (int L=1, R=L; L<=N; L++) {
-            while (sum < K && R < N) sum += foods[R++];
+            while (sum < K && R <= N) sum += foods[R++];
             if (sum >= K) {
-                intervals[R].add(new Interval(L, sum - K));
+                intervals[R - 1].add(new Interval(L, sum - K));
             }
             
             sum -= foods[L];
