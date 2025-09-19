@@ -1,0 +1,62 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Main {
+    private static int N;
+    private static int[] numbers;
+
+    private static void input() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        N = Integer.parseInt(st.nextToken());
+        numbers = new int[N];
+        st = new StringTokenizer(br.readLine());
+
+        for (int i=0; i<N; i++) {
+            numbers[i] = Integer.parseInt(st.nextToken());
+        }
+
+        Arrays.sort(numbers);
+    }
+
+    private static void process() {
+        int L = 0, R = 1, answer = 0;
+
+        for (int target=0; target<N; target++) {
+            L = 0;
+            R = N - 1;
+
+            while (L < R) {
+                if (L == target) {
+                    L++;
+                    continue;
+                }
+
+                if (R == target) {
+                    R--;
+                    continue;
+                }
+
+                int sum = numbers[L] + numbers[R];
+
+                if (sum < numbers[target]) L++;
+                else if (sum > numbers[target]) R--;
+                else {
+                    answer++;
+                    break;
+                }
+            }
+        }
+
+        System.out.println(answer);
+    }
+
+    public static void main(String[] args) throws IOException {
+        input();
+        process();
+    }
+}
