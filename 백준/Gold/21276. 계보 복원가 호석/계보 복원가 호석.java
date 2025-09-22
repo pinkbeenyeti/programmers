@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,7 +46,6 @@ public class Main {
     private static void process() {
         List<String> roots = new ArrayList<>();
 
-
         for (String key : ancestors.keySet()) {
             if (ancestors.get(key).isEmpty()) {
                 roots.add(key);
@@ -73,13 +71,15 @@ public class Main {
         }
 
         System.out.println(sb.toString());
-
+        
         for (String node : nodes) {
             sb = new StringBuilder();
-            sb.append(node).append(" ").append(childCount.get(node).size()).append(" ");
+            PriorityQueue<String> childrenQueue = childCount.get(node);
 
-            for (String child : childCount.get(node)) {
-                sb.append(child).append(" ");
+            sb.append(node).append(" ").append(childrenQueue.size()).append(" ");
+
+            while (!childrenQueue.isEmpty()) {
+                sb.append(childrenQueue.poll()).append(" ");
             }
 
             System.out.println(sb.toString());
