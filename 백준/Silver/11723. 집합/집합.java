@@ -1,49 +1,41 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Main {
-    private static Set<Integer> set = new HashSet<>();;
+    private static int S = 0;
     private static StringBuilder sb = new StringBuilder();
 
-    private static void doCommand(String command, int number) {
-        if (command.equals("add")) {
-            set.add(number);
-            return;
-        }
-
-        if (command.equals("remove")) {
-            set.remove(number);
-            return;
-        }
-
-        if (command.equals("check")) {
-            sb.append((set.contains(number)) ? 1 : 0).append("\n");
-            return;
-        }
-
-        if (command.equals("toggle")) {
-            if (set.contains(number)) set.remove(number);
-            else set.add(number);
-
+    private static void doCommand(String command, int bitNumber) {
+        if (command.equals("empty")) {
+            S = 0;
             return;
         }
 
         if (command.equals("all")) {
-            set.clear();
-
-            for (int i=1; i<=20; i++) {
-                set.add(i);
-            }
-
+            S = (1 << 21) - 1;
             return;
         }
 
-        if (command.equals("empty")) {
-            set.clear();
+        if (command.equals("toggle")) {
+            S = S ^ bitNumber;
+            return;
+        }
+
+        if (command.equals("check")) {
+            sb.append((S & bitNumber) != 0 ? 1 : 0).append("\n");
+            return;
+        }
+
+        if (command.equals("remove")) {
+            if ((S & bitNumber) != 0) {
+                S = S ^ bitNumber;
+            }
+        }
+
+        if (command.equals("add")) {
+            S = S | bitNumber;
         }
     }
 
@@ -55,7 +47,7 @@ public class Main {
 
         for (int i=1; i<=N; i++) {
             String[] command = br.readLine().split(" ");
-            doCommand(command[0], (command.length > 1) ? Integer.parseInt(command[1]) : 0);
+            doCommand(command[0], (command.length > 1) ? 1 << Integer.parseInt(command[1]) : 0);
         }
 
         System.out.println(sb.toString());
