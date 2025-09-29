@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.util.Set;
 
 public class Main {
@@ -8,20 +9,18 @@ public class Main {
     private static StringBuilder answer;
 
     private static void isValid(String password) {
-        // 1. 모음(a,e,i,o,u)이 하나라도 있는지 먼저 확인
-        if (!password.contains("a") && !password.contains("e") && !password.contains("i") && !password.contains("o") && !password.contains("u")) {
-            answer.append("<").append(password).append("> is not acceptable.\n");
-            return;
-        }
+        int seCon = 0, seVowel = 0, vowelCount = 0;
+        boolean includeVowel = false;
+        char prevChar = 'A';
 
-        int seVowel = 0; // 연속 모음 개수
-        int seCon = 0;   // 연속 자음 개수
+        for (char ch : password.toCharArray()) {
+            if (prevChar == ch && prevChar != 'e' && prevChar != 'o') {
+                answer.append("<").append(password).append("> is not acceptable.\n");
+                return;
+            }
 
-        for (int i = 0; i < password.length(); i++) {
-            char ch = password.charAt(i);
-
-            // 2. 모음/자음 연속 개수 확인
             if (vowels.contains(ch)) {
+                includeVowel = true;
                 seVowel++;
                 seCon = 0;
             } else {
@@ -29,25 +28,19 @@ public class Main {
                 seVowel = 0;
             }
 
-            if (seVowel >= 3 || seCon >= 3) {
+            if (seCon >= 3 || seVowel >= 3) {
                 answer.append("<").append(password).append("> is not acceptable.\n");
                 return;
             }
 
-            // 3. 같은 글자 연속 확인 (i > 0 조건으로 첫 글자는 제외)
-            if (i > 0) {
-                char prevChar = password.charAt(i - 1);
-                if (ch == prevChar) {
-                    if (ch != 'e' && ch != 'o') {
-                        answer.append("<").append(password).append("> is not acceptable.\n");
-                        return;
-                    }
-                }
-            }
+            prevChar = ch;
         }
 
-        // 모든 조건을 통과한 경우
-        answer.append("<").append(password).append("> is acceptable.\n");
+        if (!includeVowel) {
+            answer.append("<").append(password).append("> is not acceptable.\n");
+        } else {
+            answer.append("<").append(password).append("> is acceptable.\n");
+        }
     }
 
     private static void process() throws IOException {
@@ -66,7 +59,6 @@ public class Main {
             isValid(password);
         }
 
-        // 혹시 모를 출력 형식 오류를 방지하기 위해 print 사용
         System.out.print(answer.toString());
     }
 
