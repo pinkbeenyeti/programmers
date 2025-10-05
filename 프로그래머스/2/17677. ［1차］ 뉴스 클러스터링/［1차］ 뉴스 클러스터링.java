@@ -1,53 +1,52 @@
-import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import java.util.Map;
+import java.util.HashMap;
 
 class Solution {
-    private boolean isValid(String str) {
-        for (int i=0; i<str.length(); i++) {
-            char c = str.charAt(i);
-            if (c >= 'A' && c <= 'Z') continue;
-            
-            return false;
-        }
-        
-        return true;
-    }
-    
-    private void fillMap(HashMap<String, Integer> aggr, String str) {
-        for (int i=0; i<str.length()-1; i++) {
-            String st = str.substring(i, i+2).toUpperCase();
-            if (!isValid(st)) continue;
-            if (!aggr.containsKey(st)) {
-                aggr.put(st, 1);
-                continue;
-            }
-            aggr.replace(st, aggr.get(st)+1);
-        }
-    }
-    
     public int solution(String str1, String str2) {
-        HashMap<String, Integer> aggr1 = new HashMap<>();
-        HashMap<String, Integer> aggr2 = new HashMap<>();
-        fillMap(aggr1, str1);
-        fillMap(aggr2, str2);
+        int mul = 0, plus = 0;
         
-        double mis = 0, mu = 0;
-        for (String key : aggr1.keySet()) {
-            int val1 = aggr1.get(key);
-            if (aggr1.containsKey(key) && aggr2.containsKey(key)) {
-                int val2 = aggr2.get(key);
-                mis += Math.min(val1, val2);
-                mu += Math.max(val1, val2);
-                aggr2.remove(key);
-                continue;
+        Pattern pattern = Pattern.compile("[a-z]{2}");
+        
+        Matcher str1Matcher = pattern.matcher(str1.toLowerCase());
+        Matcher str2Matcher = pattern.matcher(str2.toLowerCase());
+        
+        Map<String, Integer> map1 = new HashMap<>();
+        Map<String, Integer> map2 = new HashMap<>();
+        
+        for (int i=0; i<str1.length() - 1; i++) {
+            if (str1Matcher.find(i) && str1Matcher.start() == i) {
+                String splited = str1Matcher.group();
+                map1.put(splited, map1.getOrDefault(splited, 0) + 1);
             }
-            mu += val1;
-        } 
-        
-        for (String key : aggr2.keySet()) {
-            mu += aggr2.get(key);
         }
-
-        if (mis == 0 && mu == 0) return 65536;
-        return (int) (mis/mu*65536);
+        
+        
+        for (int i=0; i<str2.length() - 1; i++) {
+            if (str2Matcher.find(i) && str2Matcher.start() == i) {
+                String splited = str2Matcher.group();
+                map2.put(splited, map2.getOrDefault(splited, 0) + 1);
+            }
+        }
+        
+        for (String key : map1.keySet()) {
+            if (map2.containsKey(key)) {
+                mul += Math.min(map1.get(key), map2.get(key));
+                plus += Math.max(map1.get(key), map2.get(key));
+                
+                map2.remove(key);
+            } else {
+                plus += map1.get(key);
+            }
+        }
+        
+        for (String key : map2.keySet()) {
+            plus += map2.get(key);
+        }
+        
+        if (plus == 0) return 65536;
+        else return (int) ((double) mul / plus * 65536);
     }
 }
