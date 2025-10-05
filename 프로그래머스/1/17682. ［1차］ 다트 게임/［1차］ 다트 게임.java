@@ -1,42 +1,37 @@
-import java.lang.Math;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 class Solution {
     public int solution(String dartResult) {
-        int[] scores = new int[3];
-        char[] bonus = new char[3];
-        char[] option = {' ', ' ', ' '};
+        int[] scores = new int[4];
+        int turn = 1;
         
-        int index = 0, pointer = 0;
-        for (int i=0; i<dartResult.length(); i++) {
-            char c = dartResult.charAt(i);
-            if (c >= 'A' && c <= 'Z') {
-                scores[index] = Integer.parseInt(dartResult.substring(pointer, i));
-                bonus[index] = c;
-                index++;
-                pointer = i+1;
-                continue;
+        Pattern pattern = Pattern.compile("([0-9]*)([A-Z])([*#]?)");
+        Matcher matcher = pattern.matcher(dartResult);
+        
+        while (matcher.find()) {
+            int score = Integer.parseInt(matcher.group(1));
+            String bonus = matcher.group(2), option = matcher.group(3);
+            
+            if (bonus.equals("D")) {
+                score = (int) Math.pow(score, 2);
+            } else if (bonus.equals("T")) {
+                score = (int) Math.pow(score, 3);
             }
-            if (c == '*' || c == '#') {
-                option[index-1] = c;
-                pointer = i+1;
+            
+            if (!option.isEmpty()) {
+                if (option.equals("*")) {
+                    score *= 2;
+                    scores[turn - 1] *= 2;
+                } else if (option.equals("#")) {
+                    score *= -1;
+                }
             }
+            
+            scores[turn] = score;
+            turn++;
         }
         
-        for (int i=0; i<3; i++) {
-            if (bonus[i] == 'D') scores[i] = (int) Math.pow(scores[i], 2);
-            if (bonus[i] == 'T') scores[i] = (int) Math.pow(scores[i], 3);
-            if (option[i] == '*') {
-                if (i != 0) scores[i-1] = scores[i-1] * 2;
-                scores[i] = scores[i] * 2;
-            }
-            if (option[i] == '#') scores[i] = -scores[i];
-        }
-        
-        int result = 0;
-        for (int i=0; i<3; i++) {
-            result += scores[i];
-        }
-        
-        return result;
+        return scores[1] + scores[2] + scores[3];
     }
 }
