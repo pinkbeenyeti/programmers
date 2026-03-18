@@ -5,7 +5,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    private static int[][][] dp = new int[21][21][21];
+    private static int[][][] dp = new int[101][101][101];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,12 +33,13 @@ public class Main {
         if (a <= 0 || b <= 0 || c <= 0) {
             return 1;
         }
-        if (a > 20 || b > 20 || c > 20) {
-            return w(20, 20, 20);
-        }
 
         if (dp[a][b][c] != 0) {
             return dp[a][b][c];
+        }
+
+        if (a > 20 || b > 20 || c > 20) {
+            return w(20, 20, 20);
         }
 
         if (a < b && b < c) {
