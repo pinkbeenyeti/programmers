@@ -47,8 +47,7 @@ public class Main {
     
     private static void union(int a, int b) {
         int pa = find(a), pb = find(b);
-
         if (pa == pb) ANSWER++;
-        else parent[pb] = pa;
+        parent[pb] = pa;
     }
 }
