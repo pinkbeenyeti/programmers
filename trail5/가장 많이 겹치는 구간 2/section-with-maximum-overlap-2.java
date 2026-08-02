@@ -40,14 +40,8 @@ public class Main {
         for (int i = 0; i < points.size(); i++) {
             Point point = points.get(i);
 
-            if (point.value == 1) {
-                overlay++;
-                answer = Math.max(answer, overlay);
-            }
-
-            if (point.value == -1) {
-                overlay--;
-            }
+            overlay += point.value;
+            answer = Math.max(answer, overlay);
         }
 
         System.out.print(answer);
