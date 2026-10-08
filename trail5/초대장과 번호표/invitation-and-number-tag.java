@@ -1,5 +1,5 @@
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -9,50 +9,54 @@ public class Main {
         int N = Integer.parseInt(st.nextToken());
         int G = Integer.parseInt(st.nextToken());
 
-        Set<Integer>[] groupNums = new HashSet[G + 1];
-        List<Integer>[] numGroups = new ArrayList[N + 1];
-        
-        for (int i = 1; i <= N; i++) {
-            numGroups[i] = new ArrayList<>();
-        }
+        Set<Integer>[] groupNums = new Set[G + 1];
+        Map<Integer, Set<Integer>> numGroups = new HashMap<>();
 
         for (int i = 1; i <= G; i++) {
             groupNums[i] = new HashSet<>();
+
             st = new StringTokenizer(br.readLine());
             int count = Integer.parseInt(st.nextToken());
 
-            for (int j = 0; j < count; j++) {
+            for (int j = 1; j <= count; j++) {
                 int number = Integer.parseInt(st.nextToken());
+
                 groupNums[i].add(number);
-                numGroups[number].add(i);
+
+                Set<Integer> temp = numGroups.getOrDefault(number, new HashSet<>());
+                temp.add(i);
+                numGroups.put(number, temp);
             }
         }
 
-        boolean[] invited = new boolean[N + 1];
-        Queue<Integer> queue = new ArrayDeque<>();
-
-        invited[1] = true;
-        queue.offer(1);
-
         int answer = 0;
 
-        while (!queue.isEmpty()) {
-            int current = queue.poll();
+        Set<Integer> invited = new HashSet<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+
+        invited.add(1);
+        pq.offer(1);
+
+        while (!pq.isEmpty()) {
             answer++;
+            int number = pq.poll();
 
-            for (int groupIdx : numGroups[current]) {
-                groupNums[groupIdx].remove(current);
+            Set<Integer> groups = numGroups.get(number);
+            if (groups == null) continue;
 
-                if (groupNums[groupIdx].size() == 1) {
-                    int remainingPerson = groupNums[groupIdx].iterator().next();
-                    if (!invited[remainingPerson]) {
-                        invited[remainingPerson] = true;
-                        queue.offer(remainingPerson);
+            for (int group : groups) {
+                groupNums[group].remove(number);
+                if (groupNums[group].size() == 1) {
+                    for (int num : groupNums[group]) {
+                        if (!invited.contains(num)) {
+                            invited.add(num);
+                            pq.offer(num);
+                        }
                     }
                 }
             }
         }
 
-        System.out.println(answer);
+        System.out.print(answer);
     }
 }
